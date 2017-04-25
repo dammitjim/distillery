@@ -19,11 +19,19 @@ class DistillerySpider(scrapy.Spider):
 
     def parse_distillery(self, response):
         name = response.css('#distillery-info h1 span::text').extract_first()
-        address_raw = response.css('.maps-address::text').extract()
-
+        addresses = response.css('.maps-address')
         address = ""
-        if len(address_raw) > 0:
+
+        # some pages have duplicate maps address, dont know why
+        if len(addresses) > 0:
+            address_raw = addresses[0].css('*::text').extract()
             address = ", ".join([addr.strip() for addr in address_raw])
+
+        if not name:
+            return
+
+        if not address:
+            return
 
         data_dict = {
             "name": name,
@@ -31,17 +39,21 @@ class DistillerySpider(scrapy.Spider):
             "url": response.url,
         }
 
+        wb_id = self.whisky_href_re.search(response.url)
+        if wb_id:
+            data_dict["wb_id"] = wb_id.group(0).replace("/", "")
+
         for stat in response.css('#distillery-stats .stat-item'):
-            data = stat.css('.data::text').extract_first()
-            key = stat.css('.key::text').extract_first()
+            data = stat.css('.data *::text').extract_first()
+            key = stat.css('.key *::text').extract_first()
             if key and data:
-                data_dict[key] = data
+                data_dict[key.lower()] = data
 
         for stat in response.css('.stats-horizontal .stat-item'):
-            data = stat.css('.data::text').extract_first()
-            key = stat.css('.key::text').extract_first()
+            data = stat.css('.data *::text').extract_first()
+            key = stat.css('.key *::text').extract_first()
             if key and data:
-                data_dict[key] = data
+                data_dict[key.lower()] = data
 
         whisky_hrefs = response.css('.whiskytable tr .whisky-name a::attr(href)').extract()
         data_dict["whiskies"] = [

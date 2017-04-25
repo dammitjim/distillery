@@ -1,11 +1,27 @@
 from django.db import models
 
 
+class Country(models.Model):
+    name = models.CharField(max_length=255)
+
+
 class Distillery(models.Model):
     """The Distillery where whiskies are created."""
+    wb_id = models.IntegerField()
     name = models.CharField(max_length=255)
-    address = models.TextField(blank=True)
     url = models.CharField(max_length=255)
+    address = models.TextField(blank=True, default="")
+
+    founded = models.CharField(max_length=255, blank=True, default="")
+    owner = models.CharField(max_length=255, blank=True, default="")
+    capacity_per_year = models.CharField(max_length=255, blank=True, default="")
+    website = models.CharField(max_length=255, default="", blank=True)
+    active = models.BooleanField(default=False)
+    closed = models.CharField(max_length=255, blank=True, default="")
+    spirit_stills = models.IntegerField(default=0)
+    wash_stills = models.IntegerField(default=0)
+
+    country = models.ForeignKey(Country, blank=True, null=True)
 
 
 class Type(models.Model):

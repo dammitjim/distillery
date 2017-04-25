@@ -5,3 +5,5 @@ crawler/*.json
 .DS_Store
 .idea
 *.json
+*.sqlite3
+.scrapy
