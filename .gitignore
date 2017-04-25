@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+crawler/*.json
+.scrapy/*
+.DS_Store
+.idea
+*.json
