@@ -20,12 +20,7 @@ class DistillerySpider(scrapy.Spider):
     def parse_distillery(self, response):
         name = response.css('#distillery-info h1 span::text').extract_first()
         addresses = response.css('.maps-address')
-        address = ""
-
-        # some pages have duplicate maps address, dont know why
-        if len(addresses) > 0:
-            address_raw = addresses[0].css('*::text').extract()
-            address = ", ".join([addr.strip() for addr in address_raw])
+        address = self._get_full_address(addresses)
 
         if not name:
             return
@@ -60,3 +55,12 @@ class DistillerySpider(scrapy.Spider):
             wid.group(0).replace("/", "") for href in whisky_hrefs for wid in [self.whisky_href_re.search(href)] if wid]
 
         yield data_dict
+
+    @staticmethod
+    def _get_full_address(addresses):
+        address = ""
+        # some pages have duplicate maps address, dont know why
+        if len(addresses) > 0:
+            address_raw = addresses[0].css('*::text').extract()
+            address = ", ".join([addr.strip() for addr in address_raw])
+        return address

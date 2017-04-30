@@ -11,3 +11,9 @@ class DistilleryList(generics.ListCreateAPIView):
     permission_classes = (AdminOrReadOnly, )
     serializer_class = serializers.DistillerySerializer
     pagination_class = LimitOffsetPagination
+
+
+class DistilleryDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.Distillery.objects.all()
+    permission_classes = (AdminOrReadOnly, )
+    serializer_class = serializers.DistillerySerializer

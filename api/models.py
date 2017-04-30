@@ -74,5 +74,3 @@ class Whisky(models.Model):
 
     # capability for multiple distilleries
     distillery = models.ManyToManyField(Distillery)
-
-
